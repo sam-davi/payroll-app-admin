@@ -74,3 +74,25 @@ class Allowance(models.Model):
 
     def __str__(self):
         return self.display_name
+
+
+class CustomField(models.Model):
+    field_name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.field_name
+
+    class Meta:
+        abstract = True
+
+
+class CustomDateField(CustomField):
+    pass
+
+
+class CustomNumberField(CustomField):
+    pass
+
+
+class CustomTextField(CustomField):
+    pass

@@ -1,12 +1,26 @@
 from django.contrib import admin
 
-from .models import Detail, Profile, Rate
+from .models import (
+    AdditionalDateDetail,
+    AdditionalNumberDetail,
+    AdditionalTextDetail,
+    Detail,
+    Profile,
+    Rate,
+)
 
 
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
-    list_display = ("employee", "effective_date", "rate_type", "rate", "unit_type")
-    list_filter = ("employee", "effective_date", "rate_type", "unit_type")
+    list_display = (
+        "employee",
+        "effective_date",
+        "effective_to",
+        "rate_type",
+        "rate",
+        "unit_type",
+    )
+    list_filter = ("employee", "rate_type", "unit_type")
     search_fields = (
         "employee__code",
         "employee__tax_number",
@@ -16,7 +30,7 @@ class RateAdmin(admin.ModelAdmin):
     ordering = ("employee__code", "effective_date", "rate_type")
 
 
-class RateInline(admin.StackedInline):
+class RateInline(admin.TabularInline):
     model = Rate
     extra = 0
 
@@ -44,8 +58,23 @@ class ProfileAdmin(admin.ModelAdmin):
     ordering = ("employee__code", "effective_date")
 
 
-class ProfileInline(admin.StackedInline):
+class ProfileInline(admin.TabularInline):
     model = Profile
+    extra = 0
+
+
+class AdditionalDateDetailInline(admin.TabularInline):
+    model = AdditionalDateDetail
+    extra = 0
+
+
+class AdditionalNumberDetailInline(admin.TabularInline):
+    model = AdditionalNumberDetail
+    extra = 0
+
+
+class AdditionalTextDetailInline(admin.TabularInline):
+    model = AdditionalTextDetail
     extra = 0
 
 
@@ -96,4 +125,10 @@ class DetailAdmin(admin.ModelAdmin):
         "code",
     )
 
-    inlines = [ProfileInline, RateInline]
+    inlines = (
+        AdditionalDateDetailInline,
+        AdditionalNumberDetailInline,
+        AdditionalTextDetailInline,
+        ProfileInline,
+        RateInline,
+    )

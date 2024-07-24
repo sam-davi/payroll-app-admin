@@ -1,6 +1,6 @@
 from django.db import models
 
-from datetime import date
+from datetime import date, timedelta
 
 
 # Create your models here.
@@ -52,6 +52,53 @@ class Detail(models.Model):
         return self.time_since(self.date_of_hire)
 
 
+class AdditionalDetail(models.Model):
+    detail = models.ForeignKey("employee.Detail", on_delete=models.CASCADE)
+    field = models.ForeignKey("company.CustomField", on_delete=models.CASCADE)
+    effective_date = models.DateField(blank=True, default=date.today)
+    effective_to = models.DateField(blank=True, default=date(9999, 12, 31))
+
+    class Meta:
+        abstract = True
+        unique_together = ("detail", "field", "effective_date")
+
+    def __str__(self):
+        return f"{self.detail} - {self.field} - {self.effective_date} - {self.value}"
+
+    def resolve_conflicts(self):
+        matches = self.__class__.objects.filter(
+            detail=self.detail, field=self.field
+        ).exclude(id=self.id)
+        effective_to_fixes = matches.filter(
+            effective_date__lte=self.effective_date,
+            effective_to__gte=self.effective_date,
+        )
+        effective_from_fixes = matches.filter(
+            effective_date__lte=self.effective_to, effective_to__gte=self.effective_to
+        )
+        for match in effective_to_fixes:
+            match.effective_to = self.effective_date - timedelta(days=1)
+            match.save()
+        for match in effective_from_fixes:
+            match.effective_date = self.effective_to
+            match.save()
+
+
+class AdditionalTextDetail(AdditionalDetail):
+    field = models.ForeignKey("company.CustomTextField", on_delete=models.CASCADE)
+    value = models.TextField()
+
+
+class AdditionalNumberDetail(AdditionalDetail):
+    field = models.ForeignKey("company.CustomNumberField", on_delete=models.CASCADE)
+    value = models.DecimalField(max_digits=12, decimal_places=4)
+
+
+class AdditionalDateDetail(AdditionalDetail):
+    field = models.ForeignKey("company.CustomDateField", on_delete=models.CASCADE)
+    value = models.DateField()
+
+
 class UnitTypes(models.IntegerChoices):
     HOURLY = 2080, "Hourly"
     DAILY = 260, "Daily"
@@ -70,6 +117,7 @@ class ConversionMethods(models.IntegerChoices):
 class Profile(models.Model):
     employee = models.ForeignKey("employee.Detail", on_delete=models.CASCADE)
     effective_date = models.DateField()
+    effective_to = models.DateField(blank=True, default=date(9999, 12, 31))
     rate = models.DecimalField(max_digits=12, decimal_places=4)
     unit_type = models.IntegerField(choices=UnitTypes.choices, default=UnitTypes.HOURLY)
     conversion_method = models.IntegerField(
@@ -83,6 +131,24 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.employee} - {self.effective_date}"
+
+    def resolve_conflicts(self):
+        matches = self.__class__.objects.filter(employee=self.employee).exclude(
+            id=self.id
+        )
+        effective_to_fixes = matches.filter(
+            effective_date__lte=self.effective_date,
+            effective_to__gte=self.effective_date,
+        )
+        effective_from_fixes = matches.filter(
+            effective_date__lte=self.effective_to, effective_to__gte=self.effective_to
+        )
+        for match in effective_to_fixes:
+            match.effective_to = self.effective_date - timedelta(days=1)
+            match.save()
+        for match in effective_from_fixes:
+            match.effective_date = self.effective_to
+            match.save()
 
     @property
     def hourly_rate(self):
@@ -156,6 +222,7 @@ class Profile(models.Model):
 class Rate(models.Model):
     employee = models.ForeignKey("employee.Detail", on_delete=models.CASCADE)
     effective_date = models.DateField()
+    effective_to = models.DateField(blank=True, default=date(9999, 12, 31))
     rate_type = models.ForeignKey("company.RateType", on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=12, decimal_places=4)
     unit_type = models.IntegerField(choices=UnitTypes.choices, default=UnitTypes.HOURLY)
@@ -165,3 +232,21 @@ class Rate(models.Model):
 
     def __str__(self):
         return f"{self.employee} - {self.effective_date} - {self.rate_type}"
+
+    def resolve_conflicts(self):
+        matches = self.__class__.objects.filter(
+            employee=self.employee, rate_type=self.rate_type
+        ).exclude(id=self.id)
+        effective_to_fixes = matches.filter(
+            effective_date__lte=self.effective_date,
+            effective_to__gte=self.effective_date,
+        )
+        effective_from_fixes = matches.filter(
+            effective_date__lte=self.effective_to, effective_to__gte=self.effective_to
+        )
+        for match in effective_to_fixes:
+            match.effective_to = self.effective_date - timedelta(days=1)
+            match.save()
+        for match in effective_from_fixes:
+            match.effective_date = self.effective_to
+            match.save()

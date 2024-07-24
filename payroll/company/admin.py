@@ -5,12 +5,15 @@ from .models import (
     AccumulatorMember,
     Allowance,
     AllowanceType,
+    CustomDateField,
+    CustomNumberField,
+    CustomTextField,
     Detail,
     RateType,
 )
 
 
-class AccumulatorMemberInline(admin.StackedInline):
+class AccumulatorMemberInline(admin.TabularInline):
     model = AccumulatorMember
     extra = 0
 
@@ -32,7 +35,7 @@ class AccumulatorAdmin(admin.ModelAdmin):
     inlines = (AccumulatorMemberInline,)
 
 
-class AllowanceInline(admin.StackedInline):
+class AllowanceInline(admin.TabularInline):
     model = Allowance
     extra = 0
 
@@ -74,7 +77,30 @@ class AllowanceAdmin(admin.ModelAdmin):
     ordering = ("code",)
 
 
-# Register your models here.
+@admin.register(CustomTextField)
+class CustomTextFieldAdmin(admin.ModelAdmin):
+    list_display = ("field_name",)
+    list_filter = ("field_name",)
+    search_fields = ("field_name",)
+    ordering = ("field_name",)
+
+
+@admin.register(CustomNumberField)
+class CustomNumberFieldAdmin(admin.ModelAdmin):
+    list_display = ("field_name",)
+    list_filter = ("field_name",)
+    search_fields = ("field_name",)
+    ordering = ("field_name",)
+
+
+@admin.register(CustomDateField)
+class CustomDateFieldAdmin(admin.ModelAdmin):
+    list_display = ("field_name",)
+    list_filter = ("field_name",)
+    search_fields = ("field_name",)
+    ordering = ("field_name",)
+
+
 @admin.register(Detail)
 class DetailAdmin(admin.ModelAdmin):
     list_display = (
