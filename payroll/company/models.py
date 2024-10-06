@@ -1,7 +1,11 @@
 from django.db import models
 
+from datetime import date, timedelta
 
-# Create your models here.
+from administration.choices import UnitTypes
+from administration.mixins import EffectiveDateModel
+
+
 class Detail(models.Model):
     code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=50)
@@ -20,6 +24,23 @@ class RateType(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class RateTypeDefault(EffectiveDateModel):
+    rate_type = models.ForeignKey(RateType, on_delete=models.CASCADE)
+    value = models.DecimalField(max_digits=12, decimal_places=4)
+    unit_type = models.IntegerField(choices=UnitTypes.choices, default=UnitTypes.HOURLY)
+
+    class Meta(EffectiveDateModel.Meta):
+        unique_together = (
+            "rate_type",
+            "effective_date",
+        )
+
+    def get_matches(self):
+        return (
+            super(RateTypeDefault, self).get_matches().filter(rate_type=self.rate_type)
+        )
 
 
 class FieldType(models.TextChoices):
@@ -71,6 +92,9 @@ class Allowance(models.Model):
     description = models.CharField(max_length=50)
     display_name = models.CharField(max_length=50)
     allowance_type = models.ForeignKey(AllowanceType, on_delete=models.CASCADE)
+    unit_type = models.CharField(
+        max_length=10, choices=FieldType.choices, default=FieldType.HOURS
+    )
 
     def __str__(self):
         return self.display_name

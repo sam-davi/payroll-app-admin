@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (
+from company.models import (
     Accumulator,
     AccumulatorMember,
     Allowance,
@@ -10,6 +10,7 @@ from .models import (
     CustomTextField,
     Detail,
     RateType,
+    RateTypeDefault,
 )
 
 
@@ -67,6 +68,7 @@ class AllowanceAdmin(admin.ModelAdmin):
         "description",
         "display_name",
         "allowance_type",
+        "unit_type",
     )
     list_filter = ("code",)
     search_fields = (
@@ -123,6 +125,11 @@ class DetailAdmin(admin.ModelAdmin):
     ordering = ("code",)
 
 
+class RateTypeDefaultInline(admin.TabularInline):
+    model = RateTypeDefault
+    extra = 0
+
+
 @admin.register(RateType)
 class RateTypeAdmin(admin.ModelAdmin):
     list_display = (
@@ -135,3 +142,4 @@ class RateTypeAdmin(admin.ModelAdmin):
         "description",
     )
     ordering = ("code",)
+    inlines = (RateTypeDefaultInline,)

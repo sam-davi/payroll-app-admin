@@ -7,6 +7,7 @@ from .models import (
     Detail,
     Profile,
     Rate,
+    Roster,
 )
 
 
@@ -60,21 +61,52 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class ProfileInline(admin.TabularInline):
     model = Profile
+    ordering = ("effective_date",)
+    extra = 0
+
+
+@admin.register(Roster)
+class RosterAdmin(admin.ModelAdmin):
+    list_display = (
+        "employee",
+        "roster",
+        "effective_date",
+        "effective_to",
+        "cycle_start",
+        "rate_type",
+        "repeating_unit",
+    )
+    list_filter = ("cycle_start", "rate_type")
+    search_fields = (
+        "roster__name",
+        "employee__code",
+        "employee__tax_number",
+        "employee__first_name",
+        "employee__last_name",
+    )
+
+
+class RosterInline(admin.TabularInline):
+    model = Roster
+    ordering = ("effective_date",)
     extra = 0
 
 
 class AdditionalDateDetailInline(admin.TabularInline):
     model = AdditionalDateDetail
+    ordering = ("effective_date",)
     extra = 0
 
 
 class AdditionalNumberDetailInline(admin.TabularInline):
     model = AdditionalNumberDetail
+    ordering = ("effective_date",)
     extra = 0
 
 
 class AdditionalTextDetailInline(admin.TabularInline):
     model = AdditionalTextDetail
+    ordering = ("effective_date",)
     extra = 0
 
 
@@ -131,4 +163,5 @@ class DetailAdmin(admin.ModelAdmin):
         AdditionalTextDetailInline,
         ProfileInline,
         RateInline,
+        RosterInline,
     )

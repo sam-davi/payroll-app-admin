@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "administration",
     "company",
     "employee",
+    "roster",
+    "transaction",
 ]
 
 MIDDLEWARE = [
