@@ -10,7 +10,14 @@ class ShiftAllowanceInline(admin.TabularInline):
 
 @admin.register(Shift)
 class ShiftAdmin(admin.ModelAdmin):
-    list_display = ("name", "start_time", "end_time", "total_hours", "paid_hours")
+    list_display = (
+        "name",
+        "start_time",
+        "end_time",
+        "total_hours",
+        "paid_hours",
+        "rate_type",
+    )
     list_filter = ("start_time", "end_time")
     search_fields = ("name",)
     inlines = (ShiftAllowanceInline,)
@@ -23,7 +30,7 @@ class RosterShiftInline(admin.TabularInline):
 
 @admin.register(Roster)
 class RosterAdmin(admin.ModelAdmin):
-    list_display = ("name", "cycle_length", "rate_type")
-    list_filter = ("cycle_length", "rate_type")
+    list_display = ("name", "cycle_length")
+    list_filter = ("cycle_length",)
     search_fields = ("name",)
     inlines = (RosterShiftInline,)

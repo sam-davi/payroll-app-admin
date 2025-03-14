@@ -23,14 +23,14 @@ class EffectiveDateModel(models.Model):
             effective_date__gte=self.effective_date,
             effective_date__lte=self.effective_to,
         )
-        for match in effective_to_fixes:
-            match.effective_to = self.effective_date - timedelta(days=1)
-            match.save()
         if effective_from_fixes:
             self.effective_to = min(
                 match.effective_date for match in effective_from_fixes
             ) - timedelta(days=1)
             self.save()
+        if effective_to_fixes:
+            match = effective_to_fixes.order_by("-effective_date").first()
+            match.resolve_conflicts()
 
 
 class EmployeeEffectiveDateModel(EffectiveDateModel):

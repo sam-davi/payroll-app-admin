@@ -71,3 +71,8 @@ class AdditionalNumberDetail(AdditionalDetail):
 class AdditionalDateDetail(AdditionalDetail):
     field = models.ForeignKey("company.CustomDateField", on_delete=models.CASCADE)
     value = models.DateField()
+
+
+class AdditionalBooleanDetail(AdditionalDetail):
+    field = models.ForeignKey("company.CustomBooleanField", on_delete=models.CASCADE)
+    value = models.BooleanField()

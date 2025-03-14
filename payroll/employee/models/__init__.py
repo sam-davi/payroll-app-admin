@@ -1,6 +1,7 @@
 from .detail import (
     Detail,
     AdditionalDetail,
+    AdditionalBooleanDetail,
     AdditionalDateDetail,
     AdditionalNumberDetail,
     AdditionalTextDetail,
@@ -13,6 +14,7 @@ from .roster import Roster
 __all__ = [
     "Detail",
     "AdditionalDetail",
+    "AdditionalBooleanDetail",
     "AdditionalDateDetail",
     "AdditionalNumberDetail",
     "AdditionalTextDetail",

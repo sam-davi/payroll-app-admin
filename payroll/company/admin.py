@@ -5,6 +5,7 @@ from company.models import (
     AccumulatorMember,
     Allowance,
     AllowanceType,
+    CustomBooleanField,
     CustomDateField,
     CustomNumberField,
     CustomTextField,
@@ -97,6 +98,14 @@ class CustomNumberFieldAdmin(admin.ModelAdmin):
 
 @admin.register(CustomDateField)
 class CustomDateFieldAdmin(admin.ModelAdmin):
+    list_display = ("field_name",)
+    list_filter = ("field_name",)
+    search_fields = ("field_name",)
+    ordering = ("field_name",)
+
+
+@admin.register(CustomBooleanField)
+class CustomBooleanFieldAdmin(admin.ModelAdmin):
     list_display = ("field_name",)
     list_filter = ("field_name",)
     search_fields = ("field_name",)

@@ -4,9 +4,6 @@ from django.db import models
 class Roster(models.Model):
     name = models.CharField(max_length=50, unique=True)
     cycle_length = models.IntegerField(default=7)
-    rate_type = models.ForeignKey(
-        "company.RateType", on_delete=models.SET_NULL, null=True, blank=True
-    )
     shifts = models.ManyToManyField("roster.Shift", through="roster.RosterShift")
 
     def __str__(self):

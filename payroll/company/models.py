@@ -120,3 +120,7 @@ class CustomNumberField(CustomField):
 
 class CustomTextField(CustomField):
     pass
+
+
+class CustomBooleanField(CustomField):
+    pass

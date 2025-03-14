@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    AdditionalBooleanDetail,
     AdditionalDateDetail,
     AdditionalNumberDetail,
     AdditionalTextDetail,
@@ -73,10 +74,11 @@ class RosterAdmin(admin.ModelAdmin):
         "effective_date",
         "effective_to",
         "cycle_start",
-        "rate_type",
+        "current_shift_cycle",
+        "current_shifts",
         "repeating_unit",
     )
-    list_filter = ("cycle_start", "rate_type")
+    list_filter = ("cycle_start",)
     search_fields = (
         "roster__name",
         "employee__code",
@@ -88,6 +90,12 @@ class RosterAdmin(admin.ModelAdmin):
 
 class RosterInline(admin.TabularInline):
     model = Roster
+    ordering = ("effective_date",)
+    extra = 0
+
+
+class AdditionalBooleanDetailInline(admin.TabularInline):
+    model = AdditionalBooleanDetail
     ordering = ("effective_date",)
     extra = 0
 
@@ -158,6 +166,7 @@ class DetailAdmin(admin.ModelAdmin):
     )
 
     inlines = (
+        AdditionalBooleanDetailInline,
         AdditionalDateDetailInline,
         AdditionalNumberDetailInline,
         AdditionalTextDetailInline,
